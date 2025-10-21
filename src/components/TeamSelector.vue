@@ -11,14 +11,12 @@ const teams = {
   web: {
     name: 'Web Team',
     emoji: '🌐',
-    participants: ['Alex', 'Casey', 'Robby', 'Sheila'],
-    description: 'The original web development team'
+    participants: ['Alex', 'Casey', 'Robby', 'Sheila']
   },
   mobile: {
     name: 'Mobile Team', 
     emoji: '📱',
-    participants: ['Ted', 'Kevin', 'Maria'],
-    description: 'The mobile development team'
+    participants: ['Ted', 'Kevin', 'Maria', 'Sheila']
   }
 }
 
@@ -44,7 +42,6 @@ const selectTeam = (team: 'web' | 'mobile') => {
         >
           <div class="team-emoji">{{ team.emoji }}</div>
           <h3>{{ team.name }}</h3>
-          <p class="team-description">{{ team.description }}</p>
           <div class="participants-list">
             <div 
               v-for="participant in team.participants" 
@@ -91,9 +88,10 @@ p {
 
 .teams-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(2, minmax(400px, 1fr));
   gap: 2rem;
   margin-top: 2rem;
+  justify-content: center;
 }
 
 .team-card {
@@ -127,30 +125,27 @@ p {
 
 .team-card h3 {
   font-size: 1.8rem;
-  margin-bottom: 0.5rem;
-  color: #4ecdc4;
-}
-
-.team-description {
-  font-size: 1rem;
-  opacity: 0.8;
   margin-bottom: 1.5rem;
+  color: #4ecdc4;
 }
 
 .participants-list {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 0.5rem;
   justify-content: center;
+  align-items: center;
 }
 
 .participant-tag {
   background: rgba(255, 255, 255, 0.2);
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  font-size: 0.9rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 15px;
+  font-size: 0.85rem;
   font-weight: bold;
   border: 1px solid rgba(255, 255, 255, 0.3);
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .team-card.selected .participant-tag {
@@ -159,7 +154,7 @@ p {
 }
 
 /* Responsive design */
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .teams-grid {
     grid-template-columns: 1fr;
     gap: 1rem;
@@ -175,6 +170,34 @@ p {
   
   h2 {
     font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .selector-content {
+    padding: 1rem;
+  }
+  
+  .team-card {
+    padding: 1rem;
+  }
+  
+  .team-emoji {
+    font-size: 2.5rem;
+  }
+  
+  h2 {
+    font-size: 1.8rem;
+  }
+  
+  .participants-list {
+    flex-wrap: wrap;
+    gap: 0.3rem;
+  }
+  
+  .participant-tag {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.8rem;
   }
 }
 </style>
