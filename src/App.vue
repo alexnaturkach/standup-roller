@@ -1,19 +1,32 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import TeamSelector from './components/TeamSelector.vue'
 import GameSelector from './components/GameSelector.vue'
 import SpinningWheel from './components/SpinningWheel.vue'
 import BalloonPop from './components/BalloonPop.vue'
 import HotPotato from './components/HotPotato.vue'
 import Magic8Ball from './components/Magic8Ball.vue'
 
-type GameState = 'selecting' | 'playing' | 'finished'
+type GameState = 'team-selection' | 'selecting' | 'playing' | 'finished'
 type GameType = 'Spinning Wheel of Fortune' | 'Balloon Pop Challenge' | 'Hot Potato' | 'Magic 8-Ball Shake'
+type TeamType = 'web' | 'mobile'
 
-const gameState = ref<GameState>('selecting')
+const gameState = ref<GameState>('team-selection')
+const selectedTeam = ref<TeamType | null>(null)
 const selectedGame = ref<GameType | null>(null)
 const finalWinner = ref('')
 const showFinalResult = ref(false)
 const selectedParticipants = ref<string[]>([])
+
+const teams = {
+  web: ['Alex', 'Casey', 'Robby', 'Sheila'],
+  mobile: ['Ted', 'Kevin', 'Maria']
+}
+
+const handleTeamSelected = (team: TeamType) => {
+  selectedTeam.value = team
+  gameState.value = 'selecting'
+}
 
 const handleGameSelected = (gameName: string, participants: string[]) => {
   selectedGame.value = gameName as GameType
@@ -28,7 +41,8 @@ const handleWinnerSelected = (winner: string) => {
 }
 
 const resetGame = () => {
-  gameState.value = 'selecting'
+  gameState.value = 'team-selection'
+  selectedTeam.value = null
   selectedGame.value = null
   finalWinner.value = ''
   showFinalResult.value = false
@@ -52,9 +66,17 @@ const getGameComponent = () => {
 
 <template>
   <div class="app">
+    <!-- Team Selection Phase -->
+    <TeamSelector 
+      v-if="gameState === 'team-selection'"
+      @team-selected="handleTeamSelected"
+    />
+    
     <!-- Game Selection Phase -->
     <GameSelector 
-      v-if="gameState === 'selecting'"
+      v-else-if="gameState === 'selecting'"
+      :team="selectedTeam"
+      :participants="selectedTeam ? teams[selectedTeam] : []"
       @game-selected="handleGameSelected"
     />
     

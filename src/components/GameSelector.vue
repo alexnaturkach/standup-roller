@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 
 const props = defineProps<{
+  team: 'web' | 'mobile' | null
+  participants: string[]
   onGameSelected: (gameName: string, participants: string[]) => void
 }>()
 
@@ -10,8 +12,8 @@ const selectedGame = ref('')
 const showProceedButton = ref(false)
 const showParticipantManager = ref(false)
 
-const allParticipants = ['Alex', 'Casey', 'Robby', 'Sheila']
-const presentParticipants = ref([...allParticipants])
+const allParticipants = computed(() => props.participants)
+const presentParticipants = ref([...props.participants])
 
 const games: Array<{ name: string; emoji: string; description: string }> = [
   { name: 'Spinning Wheel of Fortune', emoji: '🎡', description: 'Spin the wheel and see who it lands on!' },
@@ -52,6 +54,9 @@ const proceedToGame = () => {
 }
 
 onMounted(() => {
+  // Reset participants when component mounts with new team data
+  presentParticipants.value = [...props.participants]
+  
   // Auto-roll when component mounts
   setTimeout(() => {
     rollForGame()
@@ -64,6 +69,11 @@ onMounted(() => {
     <div class="selector-content">
       <h2>🎲 Let's Pick Your Game!</h2>
       <p>The dice will choose which exciting game we'll play today...</p>
+      
+      <!-- Team Display -->
+      <div v-if="props.team" class="team-display">
+        <h3>{{ props.team === 'web' ? '🌐 Web Team' : '📱 Mobile Team' }}</h3>
+      </div>
       
       <!-- Participant Management -->
       <div class="participant-section">
@@ -164,6 +174,23 @@ p {
   margin: 0 0 1rem 0;
   color: #4ecdc4;
   text-align: center;
+}
+
+.team-display {
+  margin-bottom: 1.5rem;
+  background: rgba(78, 205, 196, 0.2);
+  padding: 1rem;
+  border-radius: 15px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(78, 205, 196, 0.3);
+}
+
+.team-display h3 {
+  font-size: 1.5rem;
+  margin: 0;
+  color: #4ecdc4;
+  text-align: center;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .checkbox-list {
