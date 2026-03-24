@@ -14,32 +14,57 @@ const winner = ref('')
 const names = props.participants || ['Alex', 'Casey', 'Robby', 'Sheila']
 const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4']
 
+const segmentAngle = 360 / names.length
+
+const getColor = (index: number) => colors[index % colors.length]
+
+/** Same mapping used after the spin — pointer at top, half-segment offset for boundaries. */
+const getWinnerIndexByAngle = () => {
+  const normalizedAngle = ((rotation.value % 360) + 360) % 360
+  const adjusted = (360 - normalizedAngle + segmentAngle / 2) % 360
+  return Math.floor(adjusted / segmentAngle) % names.length
+}
+
 const spinWheel = () => {
   if (isSpinning.value) return
 
   isSpinning.value = true
   showResult.value = false
 
-  // Random rotation (multiple full rotations + random angle)
-  const baseRotation = 360 * (5 + Math.random() * 5) // 5-10 full rotations
-  const randomAngle = Math.random() * 360
-  rotation.value = baseRotation + randomAngle
+  const n = names.length
+  const sa = 360 / n
 
-  // Calculate winner based on final angle
+  // Pick winner first, then rotate so the final angle matches that segment (inverse of getWinnerIndexByAngle).
+  const targetIndex = Math.floor(Math.random() * n)
+  const margin = 0.02 * sa
+  const a =
+    targetIndex * sa + margin + Math.random() * (sa - 2 * margin)
+
+  const RMod = ((360 + sa / 2 - a) % 360 + 360) % 360
+
+  const current = rotation.value
+  const currentMod = ((current % 360) + 360) % 360
+  let delta = RMod - currentMod
+  if (delta <= 0) delta += 360
+
+  const spins = 5 + Math.floor(Math.random() * 5)
+  rotation.value = current + 360 * spins + delta
+}
+
+const onWheelTransitionEnd = (event: TransitionEvent) => {
+  if (event.propertyName !== 'transform') return
+  if (!isSpinning.value) return
+
+  winner.value = names[getWinnerIndexByAngle()] || ''
+
   setTimeout(() => {
-    const normalizedAngle = ((rotation.value % 360) + 360) % 360
-    const segmentAngle = 360 / names.length
-    const winnerIndex = Math.floor(normalizedAngle / segmentAngle)
-    winner.value = names[winnerIndex] || ''
-
+    // Pause so the wheel "stops", then reveal the winner modal.
     isSpinning.value = false
     showResult.value = true
 
-    // Call parent callback after a short delay
-    setTimeout(() => {
-      props.onWinnerSelected(winner.value)
-    }, 2000)
-  }, 3000) // Match CSS animation duration
+    // Notify parent once the modal is shown.
+    props.onWinnerSelected(winner.value)
+  }, 2000)
 }
 </script>
 
@@ -56,14 +81,16 @@ const spinWheel = () => {
         :class="{ spinning: isSpinning }"
         :style="{ transform: `rotate(${rotation}deg)` }"
         @click="spinWheel"
+        @transitionend="onWheelTransitionEnd"
       >
         <div
           v-for="(name, index) in names"
           :key="name"
           class="wheel-segment"
+          :data-index="index"
           :style="{
-            backgroundColor: colors[index],
-            transform: `rotate(${index * 90}deg)`,
+            backgroundColor: getColor(index),
+            transform: `rotate(${index * segmentAngle}deg)`,
           }"
         >
           <span class="segment-text">{{ name }}</span>

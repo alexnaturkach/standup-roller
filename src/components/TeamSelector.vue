@@ -11,7 +11,7 @@ const teams = {
   web: {
     name: 'Web Team',
     emoji: '🌐',
-    participants: ['Alex', 'Casey', 'Robby', 'Sheila']
+    participants: ['Alex', 'Casey', 'Robby', 'Sheila', 'JT']
   },
   mobile: {
     name: 'Mobile Team', 

@@ -6,9 +6,15 @@ import SpinningWheel from './components/SpinningWheel.vue'
 import BalloonPop from './components/BalloonPop.vue'
 import HotPotato from './components/HotPotato.vue'
 import Magic8Ball from './components/Magic8Ball.vue'
+import DrawingSticks from './components/DrawingSticks.vue'
 
 type GameState = 'team-selection' | 'selecting' | 'playing' | 'finished'
-type GameType = 'Spinning Wheel of Fortune' | 'Balloon Pop Challenge' | 'Hot Potato' | 'Magic 8-Ball Shake'
+type GameType =
+  | 'Spinning Wheel of Fortune'
+  | 'Balloon Pop Challenge'
+  | 'Hot Potato'
+  | 'Magic 8-Ball Shake'
+  | 'Drawing Sticks'
 type TeamType = 'web' | 'mobile'
 
 const gameState = ref<GameState>('team-selection')
@@ -19,7 +25,7 @@ const showFinalResult = ref(false)
 const selectedParticipants = ref<string[]>([])
 
 const teams = {
-  web: ['Alex', 'Casey', 'Robby', 'Sheila'],
+  web: ['Alex', 'Casey', 'Robby', 'Sheila', 'JT'],
   mobile: ['Ted', 'Kevin', 'Maria', 'Sheila']
 }
 
@@ -58,6 +64,8 @@ const getGameComponent = () => {
       return HotPotato
     case 'Magic 8-Ball Shake':
       return Magic8Ball
+    case 'Drawing Sticks':
+      return DrawingSticks
     default:
       return null
   }
