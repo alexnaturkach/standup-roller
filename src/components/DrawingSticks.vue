@@ -107,6 +107,7 @@ const maybeFinishGame = () => {
             :class="{
               short: getAssignedStick(participant)?.lengthType === 'short',
               covered: !isFinished,
+              'stick-highlight': isFinished && getAssignedStick(participant)?.lengthType === 'short',
             }"
             draggable="true"
             @dragstart="onDragStart(getAssignedStick(participant)!.id)"
@@ -173,6 +174,8 @@ const maybeFinishGame = () => {
   color: white;
   padding: 2rem;
   box-sizing: border-box;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .game-header {
@@ -311,6 +314,18 @@ const maybeFinishGame = () => {
 /* Short stick: offset down so the cover’s bottom lines up with long-stick covers when rows are top-aligned. */
 .stick-cover--short {
   bottom: calc(-5px - (120px - var(--stick-length)));
+}
+
+.stick-highlight {
+  animation: stickPop 1s ease-in-out;
+  border-color: #ffd700;
+  box-shadow: 0 0 12px 4px rgba(255, 215, 0, 0.6);
+}
+
+@keyframes stickPop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.6); }
+  100% { transform: scale(1); }
 }
 
 .assignment-status {

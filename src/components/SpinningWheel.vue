@@ -18,11 +18,20 @@ const segmentAngle = 360 / names.length
 
 const getColor = (index: number) => colors[index % colors.length]
 
-/** Same mapping used after the spin — pointer at top, half-segment offset for boundaries. */
+/**
+ * Which segment sits under the pointer (fixed at 12 o'clock).
+ * Segments use transform rotate(i * sa) with origin at wheel center; segment 0 is the NW wedge,
+ * so segment 0 starts at angle (360 - sa), not 0°. Equivalently:
+ *   α = (360 - R)° CW from top = wheel angle at the pointer
+ *   shifted = (α + sa) % 360  →  index = floor(shifted / sa)
+ */
 const getWinnerIndexByAngle = () => {
-  const normalizedAngle = ((rotation.value % 360) + 360) % 360
-  const adjusted = (360 - normalizedAngle + segmentAngle / 2) % 360
-  return Math.floor(adjusted / segmentAngle) % names.length
+  const n = names.length
+  const sa = segmentAngle
+  const R = ((rotation.value % 360) + 360) % 360
+  const alpha = (360 - R) % 360
+  const shifted = (alpha + sa) % 360
+  return Math.floor(shifted / sa) % n
 }
 
 const spinWheel = () => {
@@ -34,13 +43,13 @@ const spinWheel = () => {
   const n = names.length
   const sa = 360 / n
 
-  // Pick winner first, then rotate so the final angle matches that segment (inverse of getWinnerIndexByAngle).
   const targetIndex = Math.floor(Math.random() * n)
   const margin = 0.02 * sa
-  const a =
+  const shifted =
     targetIndex * sa + margin + Math.random() * (sa - 2 * margin)
 
-  const RMod = ((360 + sa / 2 - a) % 360 + 360) % 360
+  const alpha = (shifted - sa + 360) % 360
+  const RMod = (360 - alpha + 360) % 360
 
   const current = rotation.value
   const currentMod = ((current % 360) + 360) % 360
