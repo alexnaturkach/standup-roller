@@ -16,7 +16,7 @@ const teams = {
   mobile: {
     name: 'Mobile Team', 
     emoji: '📱',
-    participants: ['Ted', 'Kevin', 'Maria', 'Sheila']
+    participants: ['Ted', 'Maria', 'Sheila', 'Garrison', 'Ryan']
   }
 }
 

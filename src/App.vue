@@ -26,7 +26,7 @@ const selectedParticipants = ref<string[]>([])
 
 const teams = {
   web: ['Alex', 'Casey', 'Robby', 'Sheila', 'JT'],
-  mobile: ['Ted', 'Kevin', 'Maria', 'Sheila']
+  mobile: ['Ted', 'Maria', 'Sheila', 'Garrison', 'Ryan']
 }
 
 const handleTeamSelected = (team: TeamType) => {
