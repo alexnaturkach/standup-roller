@@ -7,6 +7,7 @@ import BalloonPop from './components/BalloonPop.vue'
 import HotPotato from './components/HotPotato.vue'
 import Magic8Ball from './components/Magic8Ball.vue'
 import DrawingSticks from './components/DrawingSticks.vue'
+import PongGame from './components/PongGame.vue'
 
 type GameState = 'team-selection' | 'selecting' | 'playing' | 'finished'
 type GameType =
@@ -15,6 +16,7 @@ type GameType =
   | 'Hot Potato'
   | 'Magic 8-Ball Shake'
   | 'Drawing Sticks'
+  | 'Pong'
 type TeamType = 'web' | 'mobile'
 
 const gameState = ref<GameState>('team-selection')
@@ -66,6 +68,8 @@ const getGameComponent = () => {
       return Magic8Ball
     case 'Drawing Sticks':
       return DrawingSticks
+    case 'Pong':
+      return PongGame
     default:
       return null
   }

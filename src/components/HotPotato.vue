@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onUnmounted } from 'vue'
 
 const props = defineProps<{
   participants?: string[]
@@ -10,8 +10,11 @@ const emit = defineEmits<{
 }>()
 
 const names: string[] = props.participants ?? ['Alex', 'Casey', 'Robby', 'Sheila']
-const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4']
-const avatars = ['👤', '👤', '👤', '👤'] // Generic avatars
+const colors = [
+  '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4',
+  '#F7DC6F', '#BB8FCE', '#F0A500', '#58D68D',
+  '#EC407A', '#26C6DA', '#FFA726', '#AB47BC',
+]
 
 const gameStarted = ref(false)
 const showResult = ref(false)
@@ -124,10 +127,10 @@ onUnmounted(() => {
           'has-potato': currentHolder === index,
           'passing': isPassing && currentHolder === index
         }"
-        :style="{ backgroundColor: colors[index] }"
+        :style="{ backgroundColor: colors[index % colors.length] }"
       >
         <div class="player-avatar">
-          <span class="player-emoji">{{ avatars[index] }}</span>
+          <span class="player-emoji">👤</span>
         </div>
         <div class="player-name">{{ name }}</div>
         <div v-if="currentHolder === index" class="potato">
