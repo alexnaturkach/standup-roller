@@ -71,7 +71,9 @@ const buildBlocks = () => {
   }
   for (let i = assignments.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1))
-    ;[assignments[i], assignments[j]] = [assignments[j], assignments[i]]
+    const tmp = assignments[i]!
+    assignments[i] = assignments[j]!
+    assignments[j] = tmp
   }
 
   const rows = n // n rows × 7 cols = 7n total blocks
@@ -83,7 +85,7 @@ const buildBlocks = () => {
         y: BLK_Y + row * (BLK_H + BLK_GAP),
         w: bw,
         h: BLK_H,
-        pIdx: assignments[row * COLS + col],
+        pIdx: assignments[row * COLS + col] ?? 0,
         hidden: true,
         revealEnd: 0,
         destroyed: false,
@@ -128,7 +130,9 @@ const onTouchMove = (e: TouchEvent) => {
   if (phase.value !== 'playing' || !canvas.value) return
   e.preventDefault()
   const rect = canvas.value.getBoundingClientRect()
-  const mx = (e.touches[0].clientX - rect.left) * (CW / rect.width)
+  const touch = e.touches[0]
+  if (!touch) return
+  const mx = (touch.clientX - rect.left) * (CW / rect.width)
   paddle.x = Math.max(0, Math.min(CW - PW, mx - PW / 2))
 }
 
@@ -155,9 +159,10 @@ const hitBlocks = (now: number) => {
       b.revealEnd = now + revealDuration
 
       const name = activeNames.value[b.pIdx]
-      scores[name]++
+      if (!name) return
+      scores[name] = (scores[name] ?? 0) + 1
 
-      if (scores[name] >= winTarget.value) endGame(name)
+      if ((scores[name] ?? 0) >= winTarget.value) endGame(name)
       return
     }
   }
@@ -178,11 +183,12 @@ const onBallLost = () => {
   phase.value = 'paused'
   cancelAnimationFrame(raf)
 
-  const maxSc = Math.max(...activeNames.value.map(n => scores[n]))
-  const tied = activeNames.value.filter(n => scores[n] === maxSc)
+  const maxSc = Math.max(...activeNames.value.map(n => scores[n] ?? 0))
+  const tied = activeNames.value.filter(n => (scores[n] ?? 0) === maxSc)
 
   if (tied.length === 1) {
-    endGame(tied[0])
+    const sole = tied[0]
+    if (sole) endGame(sole)
     return
   }
 
@@ -211,9 +217,11 @@ const draw = (now: number) => {
 
     const revealed = !b.hidden && now < b.revealEnd
     const name = activeNames.value[b.pIdx]
+    if (!name) continue
     const ci = allNames.indexOf(name) % COLORS.length
+    const blockColor = COLORS[ci] ?? '#FF6B6B'
 
-    c.fillStyle = revealed ? COLORS[ci] : '#252540'
+    c.fillStyle = revealed ? blockColor : '#252540'
     c.beginPath()
     c.roundRect(b.x, b.y, b.w, b.h, 5)
     c.fill()
@@ -367,12 +375,12 @@ onUnmounted(() => {
             <div
               class="bar-fill"
               :style="{
-                width: `${Math.min((scores[name] / winTarget) * 100, 100)}%`,
-                backgroundColor: COLORS[allNames.indexOf(name) % COLORS.length],
+                width: `${Math.min(((scores[name] ?? 0) / winTarget) * 100, 100)}%`,
+                backgroundColor: COLORS[allNames.indexOf(name) % COLORS.length] ?? '#888',
               }"
             />
           </div>
-          <div class="score-num">{{ scores[name] }}</div>
+          <div class="score-num">{{ scores[name] ?? 0 }}</div>
         </div>
       </div>
     </div>
