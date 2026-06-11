@@ -15,11 +15,11 @@ const allParticipants = computed(() => props.participants)
 const presentParticipants = ref([...props.participants])
 
 const games: Array<{ name: string; emoji: string; description: string }> = [
-  // { name: 'Spinning Wheel of Fortune', emoji: '🎡', description: 'Spin the wheel and see who it lands on!' },
-  // { name: 'Balloon Pop Challenge', emoji: '🎈', description: 'Pop balloons to reveal names - last one standing wins!' },
-  // { name: 'Hot Potato', emoji: '🥔', description: 'Pass the potato around for 15 seconds or stop it early!' },
-  // { name: 'Magic 8-Ball Shake', emoji: '🔮', description: 'Shake the mystical ball for your answer!' },
-  // { name: 'Drawing Sticks', emoji: '🪵', description: 'Assign sticks to everyone and reveal who got the short one.' },
+  { name: 'Spinning Wheel of Fortune', emoji: '🎡', description: 'Spin the wheel and see who it lands on!' },
+  { name: 'Balloon Pop Challenge', emoji: '🎈', description: 'Pop balloons to reveal names - last one standing wins!' },
+  { name: 'Hot Potato', emoji: '🥔', description: 'Pass the potato around for 15 seconds or stop it early!' },
+  { name: 'Magic 8-Ball Shake', emoji: '🔮', description: 'Shake the mystical ball for your answer!' },
+  { name: 'Drawing Sticks', emoji: '🪵', description: 'Assign sticks to everyone and reveal who got the short one.' },
   { name: 'Pong', emoji: '🏓', description: 'Hit the mystery blocks to reveal participants — first to 5 wins!' }
 ]
 
